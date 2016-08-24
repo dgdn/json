@@ -1060,8 +1060,7 @@ func typeFields(t reflect.Type) []field {
 				if name != "" || !sf.Anonymous || ft.Kind() != reflect.Struct {
 					tagged := name != ""
 					if name == "" {
-						n := strings.ToLower(sf.Name[:1]) + sf.Name[1:]
-						name = n
+						name = toLowerCamelCase(sf.Name)
 					}
 					fields = append(fields, fillField(field{
 						name:      name,
@@ -1192,4 +1191,34 @@ func cachedTypeFields(t reflect.Type) []field {
 	fieldCache.m[t] = f
 	fieldCache.Unlock()
 	return f
+}
+
+//toLowerCamelCase change the field name to its lower camelCase style
+// example: IDCard --> idCard
+func toLowerCamelCase(str string) string {
+	length := len(str)
+	if length == 0 {
+		return str
+	}
+	var end = -1
+	for i, v := range str {
+		if v > 'A' && v < 'Z' {
+			if i != 0 && i != length-1 &&
+				(str[i-1] > 'A' || str[i-1] < 'Z') &&
+				(str[i+1] < 'A' || str[i+1] > 'Z') {
+				break
+			}
+			end = i
+		} else {
+			break
+		}
+	}
+	if end != -1 {
+		if length == end+1 {
+			return strings.ToLower(str)
+		} else {
+			return strings.ToLower(str[:end+1]) + str[end+1:]
+		}
+	}
+	return str
 }
