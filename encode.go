@@ -1202,7 +1202,7 @@ func toLowerCamelCase(str string) string {
 	}
 	var end = -1
 	for i, v := range str {
-		if v > 'A' && v < 'Z' {
+		if v >= 'A' && v <= 'Z' {
 			if i != 0 && i != length-1 &&
 				(str[i-1] > 'A' || str[i-1] < 'Z') &&
 				(str[i+1] < 'A' || str[i+1] > 'Z') {
